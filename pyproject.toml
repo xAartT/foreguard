@@ -1,0 +1,71 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "foreguard"
+description = "Middleware de segurança inteligente para análise de risco de requisições HTTP"
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["version"]
+dependencies = [
+    # API
+    "fastapi==0.111.0",
+    "uvicorn==0.30.0",
+    "pydantic==2.7.0",
+    "pydantic-settings==2.3.0",
+    "python-dotenv==1.0.1",
+    # Banco de dados
+    "sqlalchemy==2.0.30",
+    "alembic==1.13.1",
+    "psycopg2-binary==2.9.9",
+    # ML
+    "scikit-learn==1.5.0",
+    "xgboost==2.0.3",
+    "joblib==1.4.2",
+    "pandas==2.2.2",
+    "numpy==1.26.4",
+    # Análise de requisição
+    "user-agents==2.2.0",
+    # Logs
+    "loguru==0.7.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.2.0",
+    "httpx==0.27.0",
+    "ruff>=0.6",
+]
+load = [
+    "locust==2.28.0",
+]
+
+[project.scripts]
+foreguard = "foreguard.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "foreguard.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["foreguard*"]
+
+[tool.setuptools.package-data]
+"foreguard.db.migrations" = ["script.py.mako"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+extend-exclude = ["venv", "foreguard/db/migrations/versions"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B", "UP"]
+ignore = ["B008"]   # Depends()/Query() em default é o idioma do FastAPI
+
+[tool.ruff.lint.isort]
+known-first-party = ["foreguard"]
+known-local-folder = ["conftest", "samples"]   # helpers de tests/ (pythonpath do pytest)

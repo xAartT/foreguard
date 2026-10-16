@@ -1,0 +1,12 @@
+# Pipeline de verificação aplicada à doc/código antes do commit.
+# Toolchain: Python 3.12 + ruff + pytest (extra [dev] do pyproject.toml).
+# TODO: `ruff format` não está adotado — o código usa alinhamento manual de
+# `=`/`:` em colunas, que o formatter desfaz. Decidir antes de habilitar.
+pre_commit:
+  - id: lint
+    check: ruff check .
+    fix: ruff check . --fix
+  - id: test
+    check: pytest -q
+
+max_fix_iterations: 2
